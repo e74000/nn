@@ -1,4 +1,4 @@
-module nn
+module github.com/e74000/nn
 
 go 1.17
 
