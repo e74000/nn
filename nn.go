@@ -202,7 +202,7 @@ func (n *Network) Perturb(strength float64) {
 		br, bc := n.layers[i].biases.Dims()
 
 		n.layers[i].weights = add(n.layers[i].weights, mat.NewDense(wr, wc, randomArray(wr*wc, -1*strength, 1*strength)))
-		n.layers[i].biases = add(n.layers[i].biases, mat.NewDense(br, bc, randomArray(wr*wc, -1*strength, 1*strength)))
+		n.layers[i].biases = add(n.layers[i].biases, mat.NewDense(br, bc, randomArray(br*bc, -1*strength, 1*strength)))
 	}
 }
 
