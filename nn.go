@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"gonum.org/v1/gonum/mat"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"time"
 )
@@ -191,6 +192,34 @@ func (n *Network) Train(inputs, expected [][]float64, epochs int) {
 
 	fmt.Printf("Trained for %d epochs in %dms with an average of %dms per epoch.\n",
 		epochs, delta, delta/int64(epochs))
+}
+
+func (n *Network) Perturb(strength float64) {
+	rand.Seed(time.Now().Unix())
+
+	for i := 0; i < n.h; i++ {
+		wr, wc := n.layers[i].weights.Dims()
+		br, bc := n.layers[i].biases.Dims()
+
+		n.layers[i].weights = add(n.layers[i].weights, mat.NewDense(wr, wc, randomArray(wr*wc, -1*strength, 1*strength)))
+		n.layers[i].biases = add(n.layers[i].biases, mat.NewDense(br, bc, randomArray(wr*wc, -1*strength, 1*strength)))
+	}
+}
+
+func (n *Network) Copy() (m Network) {
+	m = Network{
+		i:         n.i,
+		o:         n.o,
+		h:         n.h,
+		hidden:    make([]int, len(n.hidden)),
+		layers:    make([]layer, len(n.layers)),
+		learnRate: n.learnRate,
+	}
+
+	copy(m.hidden, n.hidden)
+	copy(m.layers, n.layers)
+
+	return m
 }
 
 // Save will compress the network and then save it as a file to be used later.
